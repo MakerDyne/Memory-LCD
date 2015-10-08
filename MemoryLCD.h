@@ -1,5 +1,5 @@
-#ifndef _ARDUINO_TEST_LIB_H
-#define _ARDUINO_TEST_LIB_H
+#ifndef _MEMORY_LCD_LIB_H
+#define _MEMORY_LCD_LIB_H
 
 #if ARDUINO >= 100
  #include "Arduino.h"
@@ -7,11 +7,9 @@
  #include "WProgram.h"
 #endif
 
-#include <SPI.h>
-
 // Memory LCD pixel dimensions - ALTER ACCORDING TO YOUR PARTICULAR LCD MODEL
-#define LCDWIDTH		(96)
-#define LCDHEIGHT		(96)
+#define LCDWIDTH		(128)
+#define LCDHEIGHT		(128)
 
 // Delay constants for LCD timing   // (Datasheet values)
 #define PWRUP_DISP_DELAY	40  // (>30us)
@@ -22,41 +20,40 @@
 
 class MemoryLCD {
   public:
-    MemoryLCD(byte DISPpin, byte SCSpin, byte SIpin, byte SCLKpin, boolean useEXTCOMIN);
+    MemoryLCD(const unsigned char SCSpin, const unsigned char SIpin, const unsigned char SCLKpin, const unsigned char DISPpin, const unsigned char EXTCOMINpin, const boolean useEXTCOMIN);
     void begin();
+    void end();
     // Write data direct to screen
-    void writeLineToDisplay(byte lineNumber, byte *line);
-    void writeMultipleLinesToDisplay(byte lineNumber, byte numLines, byte *lines);
-    // Write data to line buffer
-    void writePixelToLineBuffer(int pixNumber, boolean isWhite);
-    void writeByteToLineBuffer(byte byteNumber, byte byteToWrite);
-    void copyByteWithinLineBuffer(byte sourceByte, byte destinationByte);
-    void setLineBufferBlack(void);
-    void setLineBufferWhite(void);
-    // write data from line buffer to screen
-    void writeLineBufferToDisplay(byte lineNumber);
-    void writeLineBufferToDisplayRepeatedly(byte lineNumber, byte numLines);
+    void displayOnLcd(const char * data, const unsigned char lineNumber, const unsigned char numLines);
     // clear functions
-    void clearLineBuffer();
     void clearDisplay();
     // turn display on/off
     void turnOff();
     void turnOn();
     // return display parameters
-    int getDisplayWidth();
-    int getDisplayHeight();
-    // software VCOM control - NOT YET PROPERLY IMPLEMENTED
+    int getLcdWidth() const;
+    int getLcdHeight() const;
+    // VCOM control - NOT YET PROPERLY IMPLEMENTED
     void softToggleVCOM();
+    void hardToggleVCOM();
   private:
-    byte commandByte;
-    byte vcomByte;
-    byte DISP;
-    byte SCS;
-    byte SI;
-    byte SCLK;
-    byte EXTCOMIN;
-    boolean enablePWM;
-    byte lineBuffer[LCDWIDTH/8];
+    // variables
+    char commandByte;
+    char vcomByte;
+    const char DISP;
+    const char SCS;
+    const char SI;
+    const char SCLK;
+    const char EXTCOMIN;
+    const boolean enablePWM;
+    boolean EXTCOMIN_PIN_STATE;
+    unsigned int pwm_interrupt_counter;
+    char lineBuffer[LCDWIDTH/8];
+    char savedSpiControlRegister; // AVR SPI regsiter handling
+    // member functions
+    void spiSetup();
+    void spiRestore();
+    
 };
 
 #endif
