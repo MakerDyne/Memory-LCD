@@ -162,13 +162,7 @@ void MemoryLCD::softToggleVCOM() {
 }
 
 
-// To be used in conjunction with an interrupt service routine
-// e.g: in main sketch file
-// SIGNAL(TIMER0_COMPA_vect) 
-// {
-//   lcd.hardToggleVCOM();
-// }
-
+// Recommended to be used in conjunction with an interrupt service routine (see below hardToggleVCOM method for code) 
 void MemoryLCD::hardToggleVCOM() {
   if(enablePWM) {
     if(++pwm_interrupt_counter > 243) {  // 243 gives 2Hz EXTCOMIN rate
@@ -178,6 +172,11 @@ void MemoryLCD::hardToggleVCOM() {
     } 
   }
 }
+// paste into main sketch file (See demo.ino for example of it in use)
+// SIGNAL(TIMER0_COMPA_vect) 
+// {
+//   lcd.hardToggleVCOM();
+// }
 
 /*
  * Added these functions after I found the SD library to be somewhat tempremental...

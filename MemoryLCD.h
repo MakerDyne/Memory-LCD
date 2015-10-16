@@ -24,7 +24,7 @@ class MemoryLCD {
     void begin();
     void end();
     // Write data direct to screen
-    void displayOnLcd(const char * data, const unsigned char lineNumber, const unsigned char numLines);
+    void displayOnLcd(const char * data, const unsigned char lineNumber, const unsigned char numLines = 1);
     // clear functions
     void clearDisplay();
     // turn display on/off
