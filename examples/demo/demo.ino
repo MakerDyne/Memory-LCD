@@ -60,7 +60,7 @@ const byte CS            = 53; //  10/53  // switch between pin 10/53 for duemil
 
 
 // Create linebuffer to write display data to
-Linebuffer lBuffer;
+MonoLinebuffer lBuffer;
 
 // Memory LCD related variables
 MemoryLCD memLcd(LCD_SCS, SPI_MOSI, SPI_SCLK, LCD_DISP, LCD_EXTCOMIN, true);

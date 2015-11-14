@@ -7,9 +7,18 @@
  #include "WProgram.h"
 #endif
 
-class Linebuffer {
+/*
+ * File contains two classes implementing linebuffers for the Sharp Memory LCD
+ * MonoLinebuffer for all monochrome Memory LCDs
+ * ColourLinebuffer for the single model of RGB colour Memory LCD
+ * 
+ * ATTENTION: The class MonoLinebuffer requires editing before use in order
+ * to match it to the particular LCD model being used
+ */
+
+class MonoLinebuffer {
 public:     
-  Linebuffer();
+  MonoLinebuffer();
   bool writePixelToBuffer(unsigned int pixelPosition, bool isWhite);
   bool writeByteToBuffer(byte bytePosition, byte byteContents);
   void clearBuffer();
