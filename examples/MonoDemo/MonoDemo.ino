@@ -64,8 +64,6 @@ MonoLinebuffer lBuffer;
 
 // Memory LCD related variables
 MemoryLCD memLcd(LCD_SCS, SPI_MOSI, SPI_SCLK, LCD_DISP, LCD_EXTCOMIN, true);
-char * dynamicFramebuffer;
-byte linesInFramebuffer;
 int lcdWidth;
 int lcdHeight;
 
@@ -74,7 +72,6 @@ SIGNAL(TIMER0_COMPA_vect)
 {
   memLcd.hardToggleVCOM();
 }
-
 
 
 /*
@@ -116,11 +113,6 @@ static const float sineDegrees[]=
 -0.2588, -0.2419, -0.2250, -0.2079, -0.1908, -0.1736, -0.1564, -0.1392, -0.1219, -0.1045, -0.0872, 
 -0.0698, -0.0523, -0.0349, -0.0175 };
 
-// Sample graphics data. Each array holds one line of data for a particular LCD
-// Arrays of 12, 16 and 50 bytes are provided for each popular Memory LCD display width (for 96, 128 and 400 pixel LCDs respectively)
-// Edit so that that only the one array size that matches your LCD width is uncommented
-
-// NOTE: Graphics data can be held in PROGMEM instead, depending on your particular flash/RAM constraints
 
 void setup() {  
   // Open serial communications and wait for port to open:
