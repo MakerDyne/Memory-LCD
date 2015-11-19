@@ -18,13 +18,21 @@ MonoLinebuffer::MonoLinebuffer() {
 
 bool MonoLinebuffer::writePixelToBuffer(unsigned int pixelPosition, bool isWhite) {
   if(pixelPosition < lcdPixelWidth) {
-    // TODO: replace Arduino bitWrite function to make code more portable
-    bitWrite(buffer[pixelPosition/8], 7 - pixelPosition%8, isWhite);
+    unsigned int currentByte = pixelPosition/8;
+    byte bitWithinByte = 7 - (pixelPosition%8);
+    if(isWhite) {
+      buffer[currentByte] |= (1 << bitWithinByte);
+    }
+    else {
+      buffer[currentByte] &= ~(1 << bitWithinByte);
+    }    
     return true;
   }
   else {
     return false;
   }
+  // original non-portable Arduino bit setting function
+  // bitWrite(buffer[pixelPosition/8], 7 - pixelPosition%8, isWhite);
 }
 
 
@@ -99,7 +107,7 @@ bool ColourLinebuffer::writePixelToBuffer(unsigned int pixelPosition, colour c) 
 }
 
 
-bool writePixelToBuffer(unsigned int pixelPosition, bool isRed, bool isGreen, bool isBlue) {
+bool ColourLinebuffer::writePixelToBuffer(unsigned int pixelPosition, bool isRed, bool isGreen, bool isBlue) {
   if(pixelPosition < lcdPixelWidth) {
     byte RGB = 0;
     if(isBlue)
@@ -108,7 +116,7 @@ bool writePixelToBuffer(unsigned int pixelPosition, bool isRed, bool isGreen, bo
       RGB |= (1 << 1);
     if(isRed)
       RGB |= (1 << 2);
-    return writePixelToBuffer(pixelPosition, RGB);
+    return writePixelToBuffer(pixelPosition, (colour)RGB);
   }
   else {
     return false;
@@ -128,23 +136,21 @@ bool writePixelToBuffer(unsigned int pixelPosition, bool isRed, bool isGreen, bo
 // }
 
 
-void MonoLinebuffer::clearBuffer() {
+void ColourLinebuffer::clearBuffer() {
   for(byte i=0; i<lcdPixelWidth/8; i++) {
     buffer[i] = 0xFF;
   }
 }
 
 
-void setBufferColour(colour c) {
+void ColourLinebuffer::setBufferColour(colour c) {
   // TODO: individually Set the first 8 pixels (24 bits, 3 bytes) 
   // then copy the whole bytes to the rest of the linebuffer for speed?
-  for(unsigned int i=0; i<lcdPixelWidth; i++) 
+  for(unsigned int i=0; i<lcdPixelWidth; i++) {
     writePixelToBuffer(i, c);
   }
 }
   
-
-
 
 const char * const ColourLinebuffer::getPointerToBuffer() {
   return pBuffer;
