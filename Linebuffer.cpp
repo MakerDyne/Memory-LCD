@@ -19,7 +19,7 @@ MonoLinebuffer::MonoLinebuffer() {
 bool MonoLinebuffer::writePixelToBuffer(unsigned int pixelPosition, bool isWhite) {
   if(pixelPosition < lcdPixelWidth) {
     unsigned int currentByte = pixelPosition/8;
-    byte bitShift = 7 - (pixelPosition%8);
+    uint8_t bitShift = 7 - (pixelPosition%8);
     if(isWhite) {
       buffer[currentByte] |= (1 << bitShift);
     }
@@ -34,7 +34,7 @@ bool MonoLinebuffer::writePixelToBuffer(unsigned int pixelPosition, bool isWhite
 }
 
 
-bool MonoLinebuffer::writeByteToBuffer(byte bytePosition, byte byteContents) {
+bool MonoLinebuffer::writeByteToBuffer(uint8_t bytePosition, uint8_t byteContents) {
   if(bytePosition < bufferSize) {
     buffer[bytePosition] = byteContents;
     return true;
@@ -46,14 +46,14 @@ bool MonoLinebuffer::writeByteToBuffer(byte bytePosition, byte byteContents) {
 
 
 void MonoLinebuffer::clearBuffer() {
-  for(byte i=0; i<bufferSize; i++) {
+  for(uint8_t i=0; i<bufferSize; i++) {
     buffer[i] = 0xFF;
   }
 }
 
 
 void MonoLinebuffer::setBufferBlack() {
-  for(byte i=0; i<bufferSize; i++) {
+  for(uint8_t i=0; i<bufferSize; i++) {
     buffer[i] = 0x00;
   }
 }
@@ -64,7 +64,7 @@ void MonoLinebuffer::setBufferWhite() {
 }
 
 
-const char * const MonoLinebuffer::getPointerToBuffer() {
+const uint8_t * const MonoLinebuffer::getPointerToBuffer() {
   return pBuffer;
 }
 
@@ -83,8 +83,8 @@ bool ColourLinebuffer::writePixelToBuffer(unsigned int pixelPosition, colour c) 
   if((c < 8) && (pixelPosition < lcdPixelWidth)) {
     unsigned int currentBit;	// for a 128px LCD, value should be in range 0-383
     unsigned int currentByte;	// for a 128px LCD, value should be in range 0-127
-    byte bitShift;	// position of currentBit within the currentByte, value in range 0-7
-    for(byte i=0; i<3; i++) {
+    uint8_t bitShift;	// position of currentBit within the currentByte, value in range 0-7
+    for(uint8_t i=0; i<3; i++) {
       currentBit = (pixelPosition*3) + i;
       currentByte = currentBit/8;
       bitShift = 7-(currentBit%8);
@@ -107,7 +107,7 @@ bool ColourLinebuffer::writePixelToBuffer(unsigned int pixelPosition, colour c) 
 
 bool ColourLinebuffer::writePixelToBuffer(unsigned int pixelPosition, bool isRed, bool isGreen, bool isBlue) {
   if(pixelPosition < lcdPixelWidth) {
-    byte RGB = 0;
+    uint8_t RGB = 0;
     if(isBlue)
       RGB = 1;
     if(isGreen)
@@ -123,7 +123,7 @@ bool ColourLinebuffer::writePixelToBuffer(unsigned int pixelPosition, bool isRed
 
 
 void ColourLinebuffer::clearBuffer() {
-  for(byte i=0; i<bufferSize; i++) {
+  for(uint8_t i=0; i<bufferSize; i++) {
     buffer[i] = 0xFF;
   }
 }
@@ -134,11 +134,11 @@ void ColourLinebuffer::setBufferColour(colour c) {
   for(unsigned int i=0; i<8; i++) {
     writePixelToBuffer(i, c);
   }
-  for(byte i=3; i<bufferSize; i++) {
+  for(uint8_t i=3; i<bufferSize; i++) {
     buffer[i] = buffer[i%3];
   }
 }
 
-const char * const ColourLinebuffer::getPointerToBuffer() {
+const uint8_t * const ColourLinebuffer::getPointerToBuffer() {
   return pBuffer;
 }

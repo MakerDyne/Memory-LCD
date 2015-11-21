@@ -7,7 +7,7 @@
  #include "WProgram.h"
 #endif
 
-MemoryLCD::MemoryLCD(const unsigned char SCSpin, const unsigned char SIpin, const unsigned char SCLKpin, const unsigned char DISPpin, const unsigned char EXTCOMINpin, const boolean useEXTCOMIN, displayType d)
+MemoryLCD::MemoryLCD(const uint8_t SCSpin, const uint8_t SIpin, const uint8_t SCLKpin, const uint8_t DISPpin, const uint8_t EXTCOMINpin, const boolean useEXTCOMIN, displayType d)
 		    : SCS(SCSpin), 
 		      SI(SIpin),
 		      SCLK(SCLKpin), 
@@ -73,12 +73,12 @@ void MemoryLCD::end() {
 }
 
 
-void MemoryLCD::displayOnLcd(const char * const data, const unsigned char lineNumber, const unsigned char numLines) {
+void MemoryLCD::displayOnLcd(const uint8_t * const data, const uint8_t lineNumber, const uint8_t numLines) {
   spiSetup();
   // this implementation writes multiple lines that are CONSECUTIVE (although they don't have to be (if this
   // funcion was appropriately modified), as an address is given for every line, not just the first in the sequence)
   // data for all lines should be stored in a single array
-  const char * linePtr = data;
+  const uint8_t * linePtr = data;
   SPI.setBitOrder(MSBFIRST);
   digitalWrite(SCS, HIGH);
   delayMicroseconds(SCS_HIGH_DELAY);

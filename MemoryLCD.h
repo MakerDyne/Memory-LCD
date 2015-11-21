@@ -25,11 +25,11 @@ class MemoryLCD {
       colour = 3,
       color = 3
     };
-    MemoryLCD(const unsigned char SCSpin, const unsigned char SIpin, const unsigned char SCLKpin, const unsigned char DISPpin, const unsigned char EXTCOMINpin, const boolean useEXTCOMIN, displayType d);
+    MemoryLCD(const uint8_t SCSpin, const uint8_t SIpin, const uint8_t SCLKpin, const uint8_t DISPpin, const uint8_t EXTCOMINpin, const boolean useEXTCOMIN, displayType d);
     void begin();
     void end();
     // Write data direct to screen
-    void displayOnLcd(const char * const data, const unsigned char lineNumber, const unsigned char numLines = 1);
+    void displayOnLcd(const uint8_t * const data, const uint8_t lineNumber, const uint8_t numLines = 1);
     // clear functions
     void clearDisplay();
     // turn display on/off
@@ -43,19 +43,19 @@ class MemoryLCD {
     void hardToggleVCOM();
   private:
     // variables
-    char commandByte;
-    char vcomByte;
-    const char DISP;
-    const char SCS;
-    const char SI;
-    const char SCLK;
-    const char EXTCOMIN;
+    uint8_t commandByte;
+    uint8_t vcomByte;
+    const uint8_t DISP;
+    const uint8_t SCS;
+    const uint8_t SI;
+    const uint8_t SCLK;
+    const uint8_t EXTCOMIN;
     const byte colourDepth;
     const boolean enablePWM;
     boolean EXTCOMIN_PIN_STATE;
     unsigned int pwm_interrupt_counter;
-    char lineBuffer[LCDWIDTH/8];
-    char savedSpiControlRegister; // AVR SPI regsiter handling
+    uint8_t lineBuffer[LCDWIDTH/8];
+    uint8_t savedSpiControlRegister; // AVR SPI regsiter handling
     // member functions
     void spiSetup();
     void spiRestore();
