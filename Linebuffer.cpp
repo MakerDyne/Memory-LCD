@@ -31,8 +31,6 @@ bool MonoLinebuffer::writePixelToBuffer(unsigned int pixelPosition, bool isWhite
   else {
     return false;
   }
-  // original non-portable Arduino bit setting function
-  // bitWrite(buffer[pixelPosition/8], 7 - pixelPosition%8, isWhite);
 }
 
 
