@@ -20,11 +20,16 @@
 
 class MemoryLCD {
   public:
-    MemoryLCD(const unsigned char SCSpin, const unsigned char SIpin, const unsigned char SCLKpin, const unsigned char DISPpin, const unsigned char EXTCOMINpin, const boolean useEXTCOMIN);
+    enum displayType {
+      mono = 1,
+      colour = 3,
+      color = 3
+    };
+    MemoryLCD(const unsigned char SCSpin, const unsigned char SIpin, const unsigned char SCLKpin, const unsigned char DISPpin, const unsigned char EXTCOMINpin, const boolean useEXTCOMIN, displayType d);
     void begin();
     void end();
     // Write data direct to screen
-    void displayOnLcd(const char * data, const unsigned char lineNumber, const unsigned char numLines = 1);
+    void displayOnLcd(const char * const data, const unsigned char lineNumber, const unsigned char numLines = 1);
     // clear functions
     void clearDisplay();
     // turn display on/off
@@ -45,6 +50,7 @@ class MemoryLCD {
     const char SI;
     const char SCLK;
     const char EXTCOMIN;
+    const byte colourDepth;
     const boolean enablePWM;
     boolean EXTCOMIN_PIN_STATE;
     unsigned int pwm_interrupt_counter;

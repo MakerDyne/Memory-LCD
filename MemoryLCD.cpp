@@ -7,13 +7,14 @@
  #include "WProgram.h"
 #endif
 
-MemoryLCD::MemoryLCD(const unsigned char SCSpin, const unsigned char SIpin, const unsigned char SCLKpin, const unsigned char DISPpin, const unsigned char EXTCOMINpin, const boolean useEXTCOMIN)
+MemoryLCD::MemoryLCD(const unsigned char SCSpin, const unsigned char SIpin, const unsigned char SCLKpin, const unsigned char DISPpin, const unsigned char EXTCOMINpin, const boolean useEXTCOMIN, displayType d)
 		    : SCS(SCSpin), 
 		      SI(SIpin),
 		      SCLK(SCLKpin), 
 		      DISP(DISPpin), 
 		      EXTCOMIN(EXTCOMINpin), 
-		      enablePWM(useEXTCOMIN), 
+		      enablePWM(useEXTCOMIN),
+		      colourDepth(d),
 		      EXTCOMIN_PIN_STATE(false), 
 		      pwm_interrupt_counter(0), 
 		      commandByte(0b10000000),
@@ -29,7 +30,7 @@ void MemoryLCD::begin(void) {
   if(enablePWM) {
     pinMode(EXTCOMIN, OUTPUT);
     digitalWrite(EXTCOMIN, LOW);
-    // New interrupt based EXCOMIN toggle
+    // New interrupt based EXCOMIN toggle, ARDUINO SPECIFIC
     TIMSK0 |= (1 << OCIE0A);
   }
   else {
@@ -72,10 +73,10 @@ void MemoryLCD::end() {
 }
 
 
-void MemoryLCD::displayOnLcd(const char * data, const unsigned char lineNumber, const unsigned char numLines) {
+void MemoryLCD::displayOnLcd(const char * const data, const unsigned char lineNumber, const unsigned char numLines) {
   spiSetup();
-  // this implementation writes multiple lines that are CONSECUTIVE (although they don't 
-  // have to be, as an address is given for every line, not just the first in the sequence)
+  // this implementation writes multiple lines that are CONSECUTIVE (although they don't have to be (if this
+  // funcion was appropriately modified), as an address is given for every line, not just the first in the sequence)
   // data for all lines should be stored in a single array
   const char * linePtr = data;
   SPI.setBitOrder(MSBFIRST);
@@ -86,10 +87,11 @@ void MemoryLCD::displayOnLcd(const char * data, const unsigned char lineNumber, 
     SPI.setBitOrder(LSBFIRST);	// only the line number goes LSBFIRST for some reason
     SPI.transfer(x);
     SPI.setBitOrder(MSBFIRST);
-   for(byte y=0; y<LCDWIDTH/8; y++) {
+   for(byte y=0; y<(LCDWIDTH*colourDepth)/8; y++) {
      SPI.transfer(*(linePtr++));
    }
     SPI.transfer(0x00);
+    linePtr = data;
   }
   SPI.transfer(0x00);  // trailing padding chars
   delayMicroseconds(SCS_LOW_DELAY);
@@ -97,16 +99,6 @@ void MemoryLCD::displayOnLcd(const char * data, const unsigned char lineNumber, 
   delayMicroseconds(INTERFRAME_DELAY);
   spiRestore();
 }
-
-
-// void MemoryLCD::writePixelToLineBuffer(int pixel, boolean isWhite) {
-// // pixel location expected in the fn args follows the scheme defined in the datasheet.
-// // NB: the datasheet defines pixel addresses starting from 1, NOT 0
-//   if((pixel <= LCDWIDTH) && (pixel != 0)) {
-//     pixel = pixel - 1;
-//     bitWrite(lineBuffer[pixel/8], 7 - pixel%8, isWhite);
-//   }  
-// }
 
 
 void MemoryLCD::clearDisplay() {
