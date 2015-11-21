@@ -61,7 +61,7 @@ private:
 class ColourLinebuffer {
 public:     
   enum colour {	// RGB
-    black,	// 000
+    black = 0,	// 000
     blue,	// 001
     green,	// 010
     cyan,	// 011
@@ -73,7 +73,6 @@ public:
   ColourLinebuffer();
   bool writePixelToBuffer(unsigned int pixelPosition, colour c);
   bool writePixelToBuffer(unsigned int pixelPosition, bool isRed, bool isGreen, bool isBlue);
-//  bool writeByteToBuffer(byte bytePosition, byte byteContents);
   void clearBuffer();
   void setBufferColour(colour c);
   const char * const getPointerToBuffer();
