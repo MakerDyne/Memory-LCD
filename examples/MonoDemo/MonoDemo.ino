@@ -64,8 +64,8 @@ MonoLinebuffer lBuffer;
 
 // Memory LCD related variables
 MemoryLCD memLcd(LCD_SCS, SPI_MOSI, SPI_SCLK, LCD_DISP, LCD_EXTCOMIN, true, MemoryLCD::mono);
-uint16_tlcdWidth;
-uint16_tlcdHeight;
+uint16_t lcdWidth;
+uint16_t lcdHeight;
 
 // Memory LCD interrupt service routine for hardware EXTCOMIN toggle
 SIGNAL(TIMER0_COMPA_vect) 
@@ -137,11 +137,11 @@ void setup() {
 void loop(void) {
 //   // print sinewave
 //   float increment = 360.00/lcdWidth;  // one number MUST have a decimal point here!
-//   uint16_tsinValue = 0;
+//   uint16_t sinValue = 0;
 //   //for(float theta=0; theta<50.26; theta += 0.1256) {
-//   for(uint16_ttheta=0; theta<211; theta +=30) {
-//     for(uint16_ty=0; y<lcdHeight; y++) {
-//         for(uint16_tx=0; x<lcdWidth; x++) {
+//   for(uint16_t theta=0; theta<211; theta +=30) {
+//     for(uint16_t y=0; y<lcdHeight; y++) {
+//         for(uint16_t x=0; x<lcdWidth; x++) {
 //         //sinValue = (sin(theta+(x*increment))*lcdHeight/2)+lcdHeight/2;
 //         sinValue = ( sinLookupDegrees( theta+(x*increment) ) * lcdHeight/2 ) + lcdHeight/2;
 //         if(sinValue >= y && y > lcdHeight/2) {
@@ -163,17 +163,17 @@ void loop(void) {
 //   
 //   
 //   // print expanding and contracting circles
-//   uint16_toriginX = lcdWidth/2;
-//   uint16_toriginY = lcdHeight/2;
-//   uint16_texpandingCircleRadius = (lcdHeight/2)*0.9;
+//   uint16_t originX = lcdWidth/2;
+//   uint16_t originY = lcdHeight/2;
+//   uint16_t expandingCircleRadius = (lcdHeight/2)*0.9;
 //   for(uint8_t repeat = 0; repeat < 2; repeat++) {
 //     for(uint16_t radius = 5; radius < expandingCircleRadius; radius++) {
 //       for(uint16_t y = originY - radius; y <= originY; y++) {
 //         // need to calculate left and right limits of the circle
 //         float theta = acos(float(abs(originY-y))/float(radius));
 //         theta -= 1.5708;
-//         uint16_txLength = cos(theta)*float(radius);
-//         for(uint16_tx = originX - xLength; x <= originX; x++) {
+//         uint16_t xLength = cos(theta)*float(radius);
+//         for(uint16_t x = originX - xLength; x <= originX; x++) {
 //           writePixelToLineBuffer(lineBuffer, x, 0);
 // 	  writePixelToLineBuffer(lineBuffer, originX + (originX - x), 0);
 //         }
@@ -182,13 +182,13 @@ void loop(void) {
 //         lBuffer.clearBuffer();
 //       }
 //     }
-//     for(uint16_tradius = expandingCircleRadius; radius > 2; radius--) {
-//       for(uint16_ty = originY - radius; y <= originY; y++) {
+//     for(uint16_t radius = expandingCircleRadius; radius > 2; radius--) {
+//       for(uint16_t y = originY - radius; y <= originY; y++) {
 //         // need to calculate left and right limits of the circle
 //         float theta = acos(float(abs(originY-y))/float(radius));
 //         theta -= 1.5708;
-//         uint16_txLength = cos(theta)*float(radius);
-//         for(uint16_tx = originX - xLength; x <= originX ; x++) {
+//         uint16_t xLength = cos(theta)*float(radius);
+//         for(uint16_t x = originX - xLength; x <= originX ; x++) {
 //           writePixelToLineBuffer(lineBuffer, x, 0);
 // 	  writePixelToLineBuffer(lineBuffer, originX + (originX - x), 0);
 //         }
@@ -206,21 +206,21 @@ void loop(void) {
 //   
 //   // print circling circle
 //   numRepetitions = 4;
-//   uint16_tsweepRadius = (lcdHeight/2)*0.8;
-//   uint16_tsweepOriginX = lcdWidth/2;
-//   uint16_tsweepOriginY = lcdHeight/2;
-//   uint16_tcircleRadius = 0.7*((lcdHeight/2)-sweepRadius);
+//   uint16_t sweepRadius = (lcdHeight/2)*0.8;
+//   uint16_t sweepOriginX = lcdWidth/2;
+//   uint16_t sweepOriginY = lcdHeight/2;
+//   uint16_t circleRadius = 0.7*((lcdHeight/2)-sweepRadius);
 //   for(float rads=0; rads<6.2824*numRepetitions; rads += 0.04) {
 //     // calculate circle centre
-//     uint16_tcircleOriginX = sweepOriginX + cos(rads)*sweepRadius;
-//     uint16_tcircleOriginY = sweepOriginY + sin(rads)*sweepRadius;
+//     uint16_t circleOriginX = sweepOriginX + cos(rads)*sweepRadius;
+//     uint16_t circleOriginY = sweepOriginY + sin(rads)*sweepRadius;
 //     // draw circle about the centre
-//     for(uint16_ty = circleOriginY - circleRadius; y <= circleOriginY; y++) {
+//     for(uint16_t y = circleOriginY - circleRadius; y <= circleOriginY; y++) {
 //       // need to calculate left and right limits of the circle
 //       float theta = acos(float(abs(circleOriginY-y))/float(circleRadius));
 //       theta -= 1.5708;
-//       uint16_txLength = cos(theta)*float(circleRadius);
-//       for(uint16_tx = circleOriginX - xLength; x <= circleOriginX; x++) {
+//       uint16_t xLength = cos(theta)*float(circleRadius);
+//       for(uint16_t x = circleOriginX - xLength; x <= circleOriginX; x++) {
 //         writePixelToLineBuffer(lineBuffer, x, 0);
 // 	writePixelToLineBuffer(lineBuffer, circleOriginX + (circleOriginX - x), 0);
 //       }
@@ -239,15 +239,15 @@ void loop(void) {
   numRepetitions = 4;
   toggle = false;
   for(uint8_t i=0; i< numRepetitions; i++) {
-    for(uint16_ty=0; y<lcdHeight; y++) {
-      for(uint16_tx=0; x<y+((lcdWidth-lcdHeight)/2); x++) {
+    for(uint16_t y=0; y<lcdHeight; y++) {
+      for(uint16_t x=0; x<y+((lcdWidth-lcdHeight)/2); x++) {
 	lBuffer.writePixelToBuffer(x, toggle);
       }
       memLcd.displayOnLcd(lBuffer.getPointerToBuffer(), y);
       delay(5);
     }
-    for(uint16_ty=lcdHeight; y>=0; y--) {
-      for(uint16_tx=lcdWidth; x>y+((lcdWidth-lcdHeight)/2); x--) {
+    for(uint16_t y=lcdHeight; y>=0; y--) {
+      for(uint16_t x=lcdWidth; x>y+((lcdWidth-lcdHeight)/2); x--) {
 	lBuffer.writePixelToBuffer(x, toggle);
       }
       memLcd.displayOnLcd(lBuffer.getPointerToBuffer(), y);
@@ -265,8 +265,8 @@ void loop(void) {
   // Print chequerboard patterns
   numRepetitions = 8;
   for(uint8_t i=0; i<numRepetitions; i++) {
-    for(uint16_ty=1; y<(lcdHeight+1); y++) {
-      for(uint16_tx=0; x <lcdWidth/8; x++) {
+    for(uint16_t y=1; y<(lcdHeight+1); y++) {
+      for(uint16_t x=0; x <lcdWidth/8; x++) {
 	if(toggle) {
 	  lBuffer.writeByteToBuffer(x, 0xFF);
 	  toggle = false;
@@ -297,10 +297,10 @@ void loop(void) {
 //   numRepetitions = 32;
 //   toggle = true;
 //   const uint8_t lineWidth = 8;
-//   for(uint16_ti=0; i<numRepetitions; i++) {
+//   for(uint16_t i=0; i<numRepetitions; i++) {
 //     // work only on the mimumum screen area for a complete repeating pattern
-//     for(uint16_ty=0; y<(lineWidth*2)+1; y++) {
-//       for(uint16_tx=0; x<(lineWidth*2)+1; x++) {
+//     for(uint16_t y=0; y<(lineWidth*2)+1; y++) {
+//       for(uint16_t x=0; x<(lineWidth*2)+1; x++) {
 // 	writePixelToLineBuffer(lineBuffer, x, toggle);
 // 	if((x-y+1+i)%lineWidth == 0 && x != 2*lineWidth) {
 // 	  if(toggle)
@@ -316,7 +316,7 @@ void loop(void) {
 // 	  memLcd.copyByteWithinLineBuffer(1,i);
 //       }
 //       // now horizontally copy the repeating pattern to the rest of the screen
-//       for(uint16_ti=y; i<=lcdHeight; i+=(2*lineWidth))
+//       for(uint16_t i=y; i<=lcdHeight; i+=(2*lineWidth))
 // 	memLcd.displayOnLcd(lBuffer.getPointerToBuffer(), i);
 //       lBuffer.clearBuffer();
 //       //if((lcdWidth-y+1+i)%8 == 0) {
@@ -356,8 +356,8 @@ void loop(void) {
   uint8_t lineThickness = 8;
   for(uint8_t i=0; i<numRepetitions; i++) {
     for(uint8_t y=0; y<lcdHeight+lineThickness+1; y++) {  // lcdHeight+10 to give the line some thickness
-      uint16_tblackLine = y;
-      uint16_twhiteLine = y - lineThickness;
+      uint16_t blackLine = y;
+      uint16_t whiteLine = y - lineThickness;
       if(whiteLine > 0 && whiteLine < lcdHeight+1) {
         lBuffer.setBufferWhite();
 	memLcd.displayOnLcd(lBuffer.getPointerToBuffer(), whiteLine);
@@ -375,6 +375,6 @@ void loop(void) {
 }
 
 
-float sinLookupDegrees(uint16_tdegree) {
+float sinLookupDegrees(uint16_t degree) {
   return sineDegrees[degree%360];
 }
