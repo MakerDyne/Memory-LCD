@@ -39,20 +39,20 @@ Card reader used is an 'Adafruit 5V ready MicroSD Breakout Board+'
 // ---------------------------------------------------------------------------
 
 //Memory LCD / SD card reader shared pins
-const byte SPI_MOSI      = 11; //  11/51  // Do not change - hardware SPI MOSI pin   // "SI" on Memory LCD breakout, "MOSI" on SD card breakout 
-const byte SPI_SCLK      = 13; //  13/52  // Do not change - hardware SPI CLK pin    // "SCLK" on Memory LCD breakout, "CLK" on SD card breakout
+const uint8_t SPI_MOSI      = 11; //  11/51  // Do not change - hardware SPI MOSI pin   // "SI" on Memory LCD breakout, "MOSI" on SD card breakout 
+const uint8_t SPI_SCLK      = 13; //  13/52  // Do not change - hardware SPI CLK pin    // "SCLK" on Memory LCD breakout, "CLK" on SD card breakout
 
 // Memory LCD exclusive pins
-const byte LCD_EXTCOMIN  = 9;
-const byte LCD_DISP      = 8;             // Can use any pin                         // Memory LCD Display on/off pin
-const byte LCD_SCS       = 7;             // Can use any pin except dedicated SPI SS pin  // Memory LCD SPI chip select pin
+const uint8_t LCD_EXTCOMIN  = 9;
+const uint8_t LCD_DISP      = 8;             // Can use any pin                         // Memory LCD Display on/off pin
+const uint8_t LCD_SCS       = 7;             // Can use any pin except dedicated SPI SS pin  // Memory LCD SPI chip select pin
 
 // SD card reader exclusive pins
-const byte SPI_MISO      = 12; //  12/50  // Do not change - hardware SPI MISO pin  //  "DO" on SC card breakout
-const byte SD_SCS        = 10;            // Use dedicated SPI SS pin to be safe    // "CS" on SD card breakout
+const uint8_t SPI_MISO      = 12; //  12/50  // Do not change - hardware SPI MISO pin  //  "DO" on SC card breakout
+const uint8_t SD_SCS        = 10;            // Use dedicated SPI SS pin to be safe    // "CS" on SD card breakout
 
 // Offical CS pin that must be left as output for SD card lib to work
-const byte CS            = 53; //  10/53  // switch between pin 10/53 for duemilanove/mega
+const uint8_t CS            = 53; //  10/53  // switch between pin 10/53 for duemilanove/mega
 
 // ---------------------------------------------------------------------------
 // Variables assignments & initialisations:
@@ -63,9 +63,9 @@ const byte CS            = 53; //  10/53  // switch between pin 10/53 for duemil
 MonoLinebuffer lBuffer;
 
 // Memory LCD related variables
-MemoryLCD memLcd(LCD_SCS, SPI_MOSI, SPI_SCLK, LCD_DISP, LCD_EXTCOMIN, true);
-int lcdWidth;
-int lcdHeight;
+MemoryLCD memLcd(LCD_SCS, SPI_MOSI, SPI_SCLK, LCD_DISP, LCD_EXTCOMIN, true, MemoryLCD::mono);
+uint16_tlcdWidth;
+uint16_tlcdHeight;
 
 // Memory LCD interrupt service routine for hardware EXTCOMIN toggle
 SIGNAL(TIMER0_COMPA_vect) 
@@ -77,7 +77,7 @@ SIGNAL(TIMER0_COMPA_vect)
 /*
  * Demo related variables
  */
-byte numRepetitions = 4;
+uint8_t numRepetitions = 4;
 boolean toggle = true;
 static const float sineDegrees[]=
 {0.0000, 0.0175, 0.0349, 0.0523, 0.0698, 0.0872, 0.1045, 0.1219, 0.1392, 0.1564, 0.1736, 0.1908,
@@ -137,11 +137,11 @@ void setup() {
 void loop(void) {
 //   // print sinewave
 //   float increment = 360.00/lcdWidth;  // one number MUST have a decimal point here!
-//   int sinValue = 0;
+//   uint16_tsinValue = 0;
 //   //for(float theta=0; theta<50.26; theta += 0.1256) {
-//   for(int theta=0; theta<211; theta +=30) {
-//     for(int y=0; y<lcdHeight; y++) {
-//         for(int x=0; x<lcdWidth; x++) {
+//   for(uint16_ttheta=0; theta<211; theta +=30) {
+//     for(uint16_ty=0; y<lcdHeight; y++) {
+//         for(uint16_tx=0; x<lcdWidth; x++) {
 //         //sinValue = (sin(theta+(x*increment))*lcdHeight/2)+lcdHeight/2;
 //         sinValue = ( sinLookupDegrees( theta+(x*increment) ) * lcdHeight/2 ) + lcdHeight/2;
 //         if(sinValue >= y && y > lcdHeight/2) {
@@ -163,17 +163,17 @@ void loop(void) {
 //   
 //   
 //   // print expanding and contracting circles
-//   int originX = lcdWidth/2;
-//   int originY = lcdHeight/2;
-//   int expandingCircleRadius = (lcdHeight/2)*0.9;
-//   for(int repeat = 0; repeat < 2; repeat++) {
-//     for(int radius = 5; radius < expandingCircleRadius; radius++) {
-//       for(int y = originY - radius; y <= originY; y++) {
+//   uint16_toriginX = lcdWidth/2;
+//   uint16_toriginY = lcdHeight/2;
+//   uint16_texpandingCircleRadius = (lcdHeight/2)*0.9;
+//   for(uint8_t repeat = 0; repeat < 2; repeat++) {
+//     for(uint16_t radius = 5; radius < expandingCircleRadius; radius++) {
+//       for(uint16_t y = originY - radius; y <= originY; y++) {
 //         // need to calculate left and right limits of the circle
 //         float theta = acos(float(abs(originY-y))/float(radius));
 //         theta -= 1.5708;
-//         int xLength = cos(theta)*float(radius);
-//         for(int x = originX - xLength; x <= originX; x++) {
+//         uint16_txLength = cos(theta)*float(radius);
+//         for(uint16_tx = originX - xLength; x <= originX; x++) {
 //           writePixelToLineBuffer(lineBuffer, x, 0);
 // 	  writePixelToLineBuffer(lineBuffer, originX + (originX - x), 0);
 //         }
@@ -182,13 +182,13 @@ void loop(void) {
 //         lBuffer.clearBuffer();
 //       }
 //     }
-//     for(int radius = expandingCircleRadius; radius > 2; radius--) {
-//       for(int y = originY - radius; y <= originY; y++) {
+//     for(uint16_tradius = expandingCircleRadius; radius > 2; radius--) {
+//       for(uint16_ty = originY - radius; y <= originY; y++) {
 //         // need to calculate left and right limits of the circle
 //         float theta = acos(float(abs(originY-y))/float(radius));
 //         theta -= 1.5708;
-//         int xLength = cos(theta)*float(radius);
-//         for(int x = originX - xLength; x <= originX ; x++) {
+//         uint16_txLength = cos(theta)*float(radius);
+//         for(uint16_tx = originX - xLength; x <= originX ; x++) {
 //           writePixelToLineBuffer(lineBuffer, x, 0);
 // 	  writePixelToLineBuffer(lineBuffer, originX + (originX - x), 0);
 //         }
@@ -206,21 +206,21 @@ void loop(void) {
 //   
 //   // print circling circle
 //   numRepetitions = 4;
-//   int sweepRadius = (lcdHeight/2)*0.8;
-//   int sweepOriginX = lcdWidth/2;
-//   int sweepOriginY = lcdHeight/2;
-//   int circleRadius = 0.7*((lcdHeight/2)-sweepRadius);
+//   uint16_tsweepRadius = (lcdHeight/2)*0.8;
+//   uint16_tsweepOriginX = lcdWidth/2;
+//   uint16_tsweepOriginY = lcdHeight/2;
+//   uint16_tcircleRadius = 0.7*((lcdHeight/2)-sweepRadius);
 //   for(float rads=0; rads<6.2824*numRepetitions; rads += 0.04) {
 //     // calculate circle centre
-//     int circleOriginX = sweepOriginX + cos(rads)*sweepRadius;
-//     int circleOriginY = sweepOriginY + sin(rads)*sweepRadius;
+//     uint16_tcircleOriginX = sweepOriginX + cos(rads)*sweepRadius;
+//     uint16_tcircleOriginY = sweepOriginY + sin(rads)*sweepRadius;
 //     // draw circle about the centre
-//     for(int y = circleOriginY - circleRadius; y <= circleOriginY; y++) {
+//     for(uint16_ty = circleOriginY - circleRadius; y <= circleOriginY; y++) {
 //       // need to calculate left and right limits of the circle
 //       float theta = acos(float(abs(circleOriginY-y))/float(circleRadius));
 //       theta -= 1.5708;
-//       int xLength = cos(theta)*float(circleRadius);
-//       for(int x = circleOriginX - xLength; x <= circleOriginX; x++) {
+//       uint16_txLength = cos(theta)*float(circleRadius);
+//       for(uint16_tx = circleOriginX - xLength; x <= circleOriginX; x++) {
 //         writePixelToLineBuffer(lineBuffer, x, 0);
 // 	writePixelToLineBuffer(lineBuffer, circleOriginX + (circleOriginX - x), 0);
 //       }
@@ -238,16 +238,16 @@ void loop(void) {
   // print triangles
   numRepetitions = 4;
   toggle = false;
-  for(byte i=0; i< numRepetitions; i++) {
-    for(int y=0; y<lcdHeight; y++) {
-      for(int x=0; x<y+((lcdWidth-lcdHeight)/2); x++) {
+  for(uint8_t i=0; i< numRepetitions; i++) {
+    for(uint16_ty=0; y<lcdHeight; y++) {
+      for(uint16_tx=0; x<y+((lcdWidth-lcdHeight)/2); x++) {
 	lBuffer.writePixelToBuffer(x, toggle);
       }
       memLcd.displayOnLcd(lBuffer.getPointerToBuffer(), y);
       delay(5);
     }
-    for(int y=lcdHeight; y>=0; y--) {
-      for(int x=lcdWidth; x>y+((lcdWidth-lcdHeight)/2); x--) {
+    for(uint16_ty=lcdHeight; y>=0; y--) {
+      for(uint16_tx=lcdWidth; x>y+((lcdWidth-lcdHeight)/2); x--) {
 	lBuffer.writePixelToBuffer(x, toggle);
       }
       memLcd.displayOnLcd(lBuffer.getPointerToBuffer(), y);
@@ -264,9 +264,9 @@ void loop(void) {
   
   // Print chequerboard patterns
   numRepetitions = 8;
-  for(byte i=0; i<numRepetitions; i++) {
-    for(int y=1; y<(lcdHeight+1); y++) {
-      for(int x=0; x <lcdWidth/8; x++) {
+  for(uint8_t i=0; i<numRepetitions; i++) {
+    for(uint16_ty=1; y<(lcdHeight+1); y++) {
+      for(uint16_tx=0; x <lcdWidth/8; x++) {
 	if(toggle) {
 	  lBuffer.writeByteToBuffer(x, 0xFF);
 	  toggle = false;
@@ -296,11 +296,11 @@ void loop(void) {
 //   // print scrolling diagonal lines
 //   numRepetitions = 32;
 //   toggle = true;
-//   const byte lineWidth = 8;
-//   for(int i=0; i<numRepetitions; i++) {
+//   const uint8_t lineWidth = 8;
+//   for(uint16_ti=0; i<numRepetitions; i++) {
 //     // work only on the mimumum screen area for a complete repeating pattern
-//     for(int y=0; y<(lineWidth*2)+1; y++) {
-//       for(int x=0; x<(lineWidth*2)+1; x++) {
+//     for(uint16_ty=0; y<(lineWidth*2)+1; y++) {
+//       for(uint16_tx=0; x<(lineWidth*2)+1; x++) {
 // 	writePixelToLineBuffer(lineBuffer, x, toggle);
 // 	if((x-y+1+i)%lineWidth == 0 && x != 2*lineWidth) {
 // 	  if(toggle)
@@ -309,14 +309,14 @@ void loop(void) {
 // 	    toggle = true;
 // 	}
 //       // now horizontally copy the repeating pattern to the rest of the screen
-//       }for(byte i=3; i<=lcdWidth/8; i++) {
+//       }for(uint8_t i=3; i<=lcdWidth/8; i++) {
 // 	if(i%2 == 0) 
 // 	  memLcd.copyByteWithinLineBuffer(2,i);
 // 	else
 // 	  memLcd.copyByteWithinLineBuffer(1,i);
 //       }
 //       // now horizontally copy the repeating pattern to the rest of the screen
-//       for(int i=y; i<=lcdHeight; i+=(2*lineWidth))
+//       for(uint16_ti=y; i<=lcdHeight; i+=(2*lineWidth))
 // 	memLcd.displayOnLcd(lBuffer.getPointerToBuffer(), i);
 //       lBuffer.clearBuffer();
 //       //if((lcdWidth-y+1+i)%8 == 0) {
@@ -337,13 +337,13 @@ void loop(void) {
   // print black and white alternating screens
   // demonstrates use of writeByteToLineBuffer and writeLineBufferToDisplay
   numRepetitions = 4;
-  for(byte i=0; i<numRepetitions; i++) {
-    byte colour = 0x00;
+  for(uint8_t i=0; i<numRepetitions; i++) {
+    uint8_t colour = 0x00;
     if(i%2 == 0)
       lBuffer.setBufferBlack();
     else
       lBuffer.setBufferWhite();
-    for(byte y=0; y<lcdHeight; y++) {
+    for(uint8_t y=0; y<lcdHeight; y++) {
       memLcd.displayOnLcd(lBuffer.getPointerToBuffer(), y);
       delay(5);
     }
@@ -353,11 +353,11 @@ void loop(void) {
   
   
   // print horizontal line descending down the screen
-  byte lineThickness = 8;
-  for(int i=0; i<numRepetitions; i++) {
-    for(byte y=0; y<lcdHeight+lineThickness+1; y++) {  // lcdHeight+10 to give the line some thickness
-      int blackLine = y;
-      int whiteLine = y - lineThickness;
+  uint8_t lineThickness = 8;
+  for(uint8_t i=0; i<numRepetitions; i++) {
+    for(uint8_t y=0; y<lcdHeight+lineThickness+1; y++) {  // lcdHeight+10 to give the line some thickness
+      uint16_tblackLine = y;
+      uint16_twhiteLine = y - lineThickness;
       if(whiteLine > 0 && whiteLine < lcdHeight+1) {
         lBuffer.setBufferWhite();
 	memLcd.displayOnLcd(lBuffer.getPointerToBuffer(), whiteLine);
@@ -375,6 +375,6 @@ void loop(void) {
 }
 
 
-float sinLookupDegrees(int degree) {
+float sinLookupDegrees(uint16_tdegree) {
   return sineDegrees[degree%360];
 }
