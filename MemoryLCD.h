@@ -61,9 +61,6 @@ class MemoryLCD {
     SPISettings lcdSpiSettings;
     // member functions
     const uint8_t reverseBitOrder(const uint8_t b);
-//     void spiSetup();
-//     void spiRestore();
-    
 };
 
 #endif

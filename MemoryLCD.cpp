@@ -167,36 +167,6 @@ void MemoryLCD::hardToggleVCOM() {
 //   lcd.hardToggleVCOM();
 // }
 
-/*
- * Added these functions after I found the SD library to be somewhat tempremental...
- * Trying to play nicely with other devices on the SPI bus that might use different settings
- * The aim of these functions is to save the existing state of the SPI Control Register
- * before any function in the Memory LCD alters them, and then to restore the existing
- * SPI Control Register settings when each Memory LCD function finishes.
- * 
- * Made obsolete in Arduino 1.6.6 due to Arduino's own implementation of SPI transactions
- */
-
-
-// Made obsolete in Arduino 1.6.6 due to Arduino's own implementation of SPI transactions
-// Setup SPI registers for use with Memory LCD
-// void MemoryLCD::spiSetup() {
-//   savedSpiControlRegister = SPCR;
-//   SPI.begin();
-//   SPI.setBitOrder(MSBFIRST);  // remember to change to LSBFIRST for the address chars!
-//   SPI.setDataMode(SPI_MODE0);
-//   SPI.setClockDivider(SPI_CLOCK_DIV4);	// this is the conservative setting
-//   // Datasheet says SPI clock must have <1MHz frequency (SPI_CLOCK_DIV16)
-//   // but it may work at 2MHz (SPI_CLOCK_DIV8) or even 4MHz (SPI_CLOCK_DIV4)
-// }
-
-
-// Made obsolete in Arduino 1.6.6 due to Arduino's own implementation of SPI transactions
-// Return SPI registers to state they were in before the Memory LCD library ued the SPI bus
-// void MemoryLCD::spiRestore() {
-//   SPCR = savedSpiControlRegister;
-// }
-
 
 // Code to reverse bit order of a singe 8-bit byte
 // Copied from user "sth" on StackOverflow
