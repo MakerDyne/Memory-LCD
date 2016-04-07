@@ -38,7 +38,10 @@ void MemoryLCD::begin(void) {
   }
 
   // setup SPI
-  spiSetup();
+  SPI.begin();
+  // Datasheet says SPI clock must have <1MHz frequency (SPI_CLOCK_DIV16)
+  // but it may work at 2MHz (SPI_CLOCK_DIV8) or even 4MHz (SPI_CLOCK_DIV4)
+  lcdSpiSettings = SPISettings(SPI_CLOCK_DIV4, MSBFIRST, SPI_MODE0);
   // Set pin modes
   pinMode(SCS, OUTPUT);
   pinMode(SI, OUTPUT);
@@ -61,8 +64,6 @@ void MemoryLCD::begin(void) {
 
   pinMode(EXTCOMIN, OUTPUT);
   delayMicroseconds(PWRUP_EXTCOMIN_DELAY);
-  
-  spiRestore();
 }
 
 
@@ -70,23 +71,21 @@ void MemoryLCD::end() {
   if(enablePWM) {
     TIMSK0 |= (1 << OCIE0A); // TODO disable this bit! (this line just copied from begin())
   }
+  SPI.end();
 }
 
 
 void MemoryLCD::displayOnLcd(const uint8_t * const data, const uint8_t lineNumber, const uint8_t numLines) {
-  spiSetup();
+  SPI.beginTransaction(lcdSpiSettings);
   // this implementation writes multiple lines that are CONSECUTIVE (although they don't have to be (if this
   // funcion was appropriately modified), as an address is given for every line, not just the first in the sequence)
   // data for all lines should be stored in a single array
   const uint8_t * linePtr = data;
-  SPI.setBitOrder(MSBFIRST);
   digitalWrite(SCS, HIGH);
   delayMicroseconds(SCS_HIGH_DELAY);
   SPI.transfer(0b10000000);
   for(byte x=lineNumber+1; x<lineNumber+numLines+1; x++) {
-    SPI.setBitOrder(LSBFIRST);	// only the line number goes LSBFIRST for some reason
-    SPI.transfer(x);
-    SPI.setBitOrder(MSBFIRST);
+    SPI.transfer(reverseBitOrder(x)); // only the line number goes LSBFIRST for some reason
    for(byte y=0; y<(LCDWIDTH*colourDepth)/8; y++) {
      SPI.transfer(*(linePtr++));
    }
@@ -97,13 +96,12 @@ void MemoryLCD::displayOnLcd(const uint8_t * const data, const uint8_t lineNumbe
   delayMicroseconds(SCS_LOW_DELAY);
   digitalWrite(SCS, LOW);
   delayMicroseconds(INTERFRAME_DELAY);
-  spiRestore();
+  SPI.endTransaction();
 }
 
 
 void MemoryLCD::clearDisplay() {
-  spiSetup();
-  SPI.setBitOrder(MSBFIRST);
+  SPI.beginTransaction(lcdSpiSettings);
   digitalWrite(SCS, HIGH);
   delayMicroseconds(SCS_HIGH_DELAY);
   SPI.transfer(0b00100000);
@@ -111,7 +109,7 @@ void MemoryLCD::clearDisplay() {
   delayMicroseconds(SCS_LOW_DELAY);
   digitalWrite(SCS, LOW);
   delayMicroseconds(INTERFRAME_DELAY);
-  spiRestore();
+  SPI.endTransaction();
 }
 
 
@@ -140,8 +138,7 @@ int MemoryLCD::getLcdHeight() const {
     
 
 void MemoryLCD::softToggleVCOM() {
-  spiSetup();
-  SPI.setBitOrder(MSBFIRST);
+  SPI.beginTransaction(lcdSpiSettings);
   vcomByte ^= (0b01000000);
   digitalWrite(SCS, HIGH);
   delayMicroseconds(SCS_HIGH_DELAY);
@@ -150,7 +147,7 @@ void MemoryLCD::softToggleVCOM() {
   delayMicroseconds(SCS_LOW_DELAY);
   digitalWrite(SCS, LOW);
   delayMicroseconds(10);
-  spiRestore();
+  SPI.endTransaction();
 }
 
 
@@ -176,21 +173,38 @@ void MemoryLCD::hardToggleVCOM() {
  * The aim of these functions is to save the existing state of the SPI Control Register
  * before any function in the Memory LCD alters them, and then to restore the existing
  * SPI Control Register settings when each Memory LCD function finishes.
+ * 
+ * Made obsolete in Arduino 1.6.6 due to Arduino's own implementation of SPI transactions
  */
 
+
+// Made obsolete in Arduino 1.6.6 due to Arduino's own implementation of SPI transactions
 // Setup SPI registers for use with Memory LCD
-void MemoryLCD::spiSetup() {
-  savedSpiControlRegister = SPCR;
-  SPI.begin();
-  SPI.setBitOrder(MSBFIRST);  // remember to change to LSBFIRST for the address chars!
-  SPI.setDataMode(SPI_MODE0);
-  SPI.setClockDivider(SPI_CLOCK_DIV4);	// this is the conservative setting
-  // Datasheet says SPI clock must have <1MHz frequency (SPI_CLOCK_DIV16)
-  // but it may work at 2MHz (SPI_CLOCK_DIV8) or even 4MHz (SPI_CLOCK_DIV4)
-}
+// void MemoryLCD::spiSetup() {
+//   savedSpiControlRegister = SPCR;
+//   SPI.begin();
+//   SPI.setBitOrder(MSBFIRST);  // remember to change to LSBFIRST for the address chars!
+//   SPI.setDataMode(SPI_MODE0);
+//   SPI.setClockDivider(SPI_CLOCK_DIV4);	// this is the conservative setting
+//   // Datasheet says SPI clock must have <1MHz frequency (SPI_CLOCK_DIV16)
+//   // but it may work at 2MHz (SPI_CLOCK_DIV8) or even 4MHz (SPI_CLOCK_DIV4)
+// }
 
 
+// Made obsolete in Arduino 1.6.6 due to Arduino's own implementation of SPI transactions
 // Return SPI registers to state they were in before the Memory LCD library ued the SPI bus
-void MemoryLCD::spiRestore() {
-  SPCR = savedSpiControlRegister;
+// void MemoryLCD::spiRestore() {
+//   SPCR = savedSpiControlRegister;
+// }
+
+
+// Code to reverse bit order of a singe 8-bit byte
+// Copied from user "sth" on StackOverflow
+// http://stackoverflow.com/questions/2602823/in-c-c-whats-the-simplest-way-to-reverse-the-order-of-bits-in-a-byte
+const uint8_t MemoryLCD::reverseBitOrder(const uint8_t b) {
+   uint8_t temp = b;
+   temp = (temp & 0xF0) >> 4 | (temp & 0x0F) << 4;
+   temp = (temp & 0xCC) >> 2 | (temp & 0x33) << 2;
+   temp = (temp & 0xAA) >> 1 | (temp & 0x55) << 1;
+   return temp;
 }

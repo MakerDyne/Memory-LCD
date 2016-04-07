@@ -7,6 +7,8 @@
  #include "WProgram.h"
 #endif
 
+#include <SPI.h>
+
 // Memory LCD pixel dimensions - ALTER ACCORDING TO YOUR PARTICULAR LCD MODEL
 #define LCDWIDTH		(128)
 #define LCDHEIGHT		(128)
@@ -56,9 +58,11 @@ class MemoryLCD {
     unsigned int pwm_interrupt_counter;
     uint8_t lineBuffer[LCDWIDTH/8];
     uint8_t savedSpiControlRegister; // AVR SPI regsiter handling
+    SPISettings lcdSpiSettings;
     // member functions
-    void spiSetup();
-    void spiRestore();
+    const uint8_t reverseBitOrder(const uint8_t b);
+//     void spiSetup();
+//     void spiRestore();
     
 };
 
